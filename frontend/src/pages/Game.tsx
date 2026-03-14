@@ -26,6 +26,14 @@ function Game() {
     const [year, setYear] = useState("");
     // const [playerId, setPlayerId] = useState("");
     const [playerId, setPlayerId] = useState<string | null>(null);
+    const [imageSrc, setImageSrc] = useState<string | null>(null);
+
+
+    useEffect(() => {
+        if(gameState?.imageUrl){
+            setImageSrc(`${gameState.imageUrl}?t=${Date.now()}`);
+        }
+    }, [gameState?.currentRound]);
 
     useEffect(() => {
         const storedPlayerId = localStorage.getItem("playerId");
@@ -77,7 +85,7 @@ function Game() {
             <h2>Round {gameState?.currentRound}</h2>
 
             <img
-                src={gameState?.imageUrl}
+                src={imageSrc ?? ""}
                 alt="round"
                 width="400"
             />

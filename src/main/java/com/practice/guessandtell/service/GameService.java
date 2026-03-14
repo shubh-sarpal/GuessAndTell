@@ -27,6 +27,7 @@ public class GameService {
     private final PlayerRepository playerRepository;
     private final RoundRepository roundRepository;
     private final GuessRepository guessRepository;
+    private final WikimediaRandomImageService wikimediaRandomImageService;
 
     public GameResponse createGame(CreateGameRequest request) {
         Game game = new Game();
@@ -96,14 +97,16 @@ public class GameService {
         Round round = new Round();
         round.setGame(game);
 
+        RandomGeoImage image = wikimediaRandomImageService.fetchRandomGeoImage();
+
         //TODO Logic for game round properties setup
-        round.setImageUrl("https://example.com/sample.jpg");
-        round.setActualLatitude(28.6139 + roundNumber);
-        round.setActualLongitude(77.834 + roundNumber);
-        round.setActualYear(2018 + roundNumber);
+        round.setImageUrl(image.imageUrl());
+        round.setActualLatitude(image.latitude());
+        round.setActualLongitude(image.longitude());
+        round.setActualYear(2000 + (int)(Math.random()*24));
 
         round.setStartedAt(Instant.now());
-        return round;
+        return roundRepository.save(round);
     }
 
     public void nextRound(String code){
@@ -185,6 +188,10 @@ public class GameService {
     }
 
     private void checkAndAdvanceRound(Game game, Round currentRound) {
+
+        if(currentRound.getEndedAt() != null){
+            return;
+        }
         long guessCount = guessRepository.countByRound(currentRound);
 
         if(guessCount < game.getPlayers().size()){
