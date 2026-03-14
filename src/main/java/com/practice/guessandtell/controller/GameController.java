@@ -2,6 +2,7 @@ package com.practice.guessandtell.controller;
 
 import com.practice.guessandtell.dto.*;
 import com.practice.guessandtell.service.GameService;
+import com.practice.guessandtell.service.WikimediaRandomImageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class GameController {
 
     private final GameService gameService;
+    private final WikimediaRandomImageService wikimediaRandomImageService;
 
     @PostMapping
     public ResponseEntity<GameResponse> createGame(
@@ -57,5 +59,10 @@ public class GameController {
             @PathVariable String code
     ){
         return ResponseEntity.ok(gameService.getGameState(code));
+    }
+
+    @GetMapping("/test")
+    public RandomGeoImage testRandom(){
+        return wikimediaRandomImageService.fetchRandomGeoImage();
     }
 }
